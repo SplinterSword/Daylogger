@@ -19,7 +19,7 @@ async function getOcrByHour(hour: number) {
         })
 
         const finalData : OCRResult = {
-            text: results?.data?.slice(7, 11).map(item => item?.content?.text).join(' ') !== undefined ? results?.data?.slice(5, results?.data?.length).map(item => item?.content?.text).join('\n') : '',
+            text: results?.data?.slice(8, results?.data?.length).map(item => item?.content?.text).join(' ') !== undefined ? results?.data?.slice(8, results?.data?.length).map(item => item?.content?.text).join('\n') : '',
             hour: hour
         }
     

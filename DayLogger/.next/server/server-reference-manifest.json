@@ -1,0 +1,28 @@
+{
+  "node": {
+    "0009434cb23b26d2d93f9cfd9a07ccfecb29e3a4d1": {
+      "workers": {
+        "app/page": {
+          "moduleId": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2Fhome%2Fsplintersword%2FDocuments%2FComputers%2FDaylogger-frontend%2FDayLogger%2Flib%2Factions%2Fget-screenpipe-app-settings.ts%22%2C%5B%7B%22id%22%3A%220009434cb23b26d2d93f9cfd9a07ccfecb29e3a4d1%22%2C%22exportedName%22%3A%22getScreenpipeAppSettings%22%7D%2C%7B%22id%22%3A%224092613530731772c00198c77be843d4fa60f8377b%22%2C%22exportedName%22%3A%22updateScreenpipeAppSettings%22%7D%5D%5D%5D&__client_imported__=true!",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/page": "action-browser"
+      }
+    },
+    "4092613530731772c00198c77be843d4fa60f8377b": {
+      "workers": {
+        "app/page": {
+          "moduleId": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2Fhome%2Fsplintersword%2FDocuments%2FComputers%2FDaylogger-frontend%2FDayLogger%2Flib%2Factions%2Fget-screenpipe-app-settings.ts%22%2C%5B%7B%22id%22%3A%220009434cb23b26d2d93f9cfd9a07ccfecb29e3a4d1%22%2C%22exportedName%22%3A%22getScreenpipeAppSettings%22%7D%2C%7B%22id%22%3A%224092613530731772c00198c77be843d4fa60f8377b%22%2C%22exportedName%22%3A%22updateScreenpipeAppSettings%22%7D%5D%5D%5D&__client_imported__=true!",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/page": "action-browser"
+      }
+    }
+  },
+  "edge": {},
+  "encryptionKey": "FieCwDsvbFX46dGuM2ezKkEMqya4OacwDQeICNXX1e4="
+}
