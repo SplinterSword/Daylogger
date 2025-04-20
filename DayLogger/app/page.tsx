@@ -64,6 +64,9 @@ export default function Page() {
   const [logs, setLogs] = useState<any[]>([])
   const [allLogs, setAllLogs] = useState<any[]>([])
   const [searchQuery, setSearchQuery] = useState("")
+  const [question, setQuestion] = useState("")
+  const [answer, setAnswer] = useState("")
+  const [asking, setAsking] = useState(false)
   const [date, setDate] = useState(
     new Date().toLocaleDateString("en-US", {
       weekday: "long",
@@ -122,6 +125,42 @@ export default function Page() {
       console.error("Error fetching logs:", error)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleAsk = async () => {
+    if (!question.trim()) return;
+    setAsking(true)
+    setAnswer("")
+
+    try {
+      const response = await fetch('http://localhost:8080/api/ask-logs', {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          question: question,
+          logs: allLogs,
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error("Failed to get answer")
+      }
+
+      const data = await response.json()
+
+      console.log("Answer:", data.answer)
+
+      setAnswer(data.answer || "No answer received.")
+    } catch (error) {
+
+      console.error("Error asking question:", error)
+      setAnswer("There was an error answering your question.")
+
+    } finally {
+      setAsking(false)
     }
   }
 
@@ -258,6 +297,27 @@ export default function Page() {
                       </div>
                     </div>
                   )}
+                  {/* Ask a question about the logs */}
+                  <div className="space-y-4 mt-8">
+                    <h3 className="text-xl font-semibold text-center">Ask a question about your logs</h3>
+                    <div className="relative max-w-xl mx-auto flex items-center space-x-2">
+                      <Input
+                        type="text"
+                        placeholder="E.g., What was the most frequent task today?"
+                        value={question}
+                        onChange={(e) => setQuestion(e.target.value)}
+                        className="py-2"
+                      />
+                      <Button onClick={handleAsk} disabled={asking || !question.trim()}>
+                        {asking ? "Asking..." : "Ask"}
+                      </Button>
+                    </div>
+                    {answer && (
+                      <div className="max-w-2xl mx-auto bg-white border border-gray-200 p-4 rounded-lg shadow-sm text-center">
+                        <p className="text-gray-700 whitespace-pre-line">{answer}</p>
+                      </div>
+                    )}
+                  </div>
                 </div>
               )}
             </div>

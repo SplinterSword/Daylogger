@@ -1,32 +1,45 @@
 import Groq from "groq-sdk";
 
 export interface HourlyGroqSummary {
-    activity: string;
-    notes: string[];
+  activity: string;
+  notes: string[];
 }
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
 export function extractJson<T = HourlyGroqSummary>(input: string): T | null {
-    const jsonMatch = input.match(/{[\s\S]*}/)
-  
-    if (!jsonMatch) return null
-  
-    try {
-      return JSON.parse(jsonMatch[0]) as T
-    } catch (err) {
-      const returnError:HourlyGroqSummary = {
-        activity: "Error",
-        notes: [err instanceof Error ? err.message : "Some kind of parsing error"]
-      }
-      console.error("JSON parse failed:", err)
-      return returnError as T
+  const jsonMatch = input.match(/{[\s\S]*}/)
+
+  if (!jsonMatch) return null
+
+  try {
+    return JSON.parse(jsonMatch[0]) as T
+  } catch (err) {
+    const returnError: HourlyGroqSummary = {
+      activity: "Error",
+      notes: [err instanceof Error ? err.message : "Some kind of parsing error"]
     }
+    console.error("JSON parse failed:", err)
+    return returnError as T
   }
+}
+
+function cleanAnswer(input : string) : string {
+
+  let cleaned = input.replace(/<\/?think>/gi, '');
+
+  cleaned = cleaned
+    .replace(/\bJSON data\b/gi, "log")
+    .replace(/\bJSON object\b/gi, "log")
+    .replace(/\bJSON objects\b/gi, "logs")
+    .replace(/\bJSON\b/gi, "log");
+
+  return cleaned;
+}
 
 async function groqSummarizer(ocrInput: string): Promise<HourlyGroqSummary> {
 
-    const prompt = `
+  const prompt = `
 You are an intelligent assistant. Your job is to analyze a list of raw OCR screen texts from a computer session lasting one hour. 
 
 Return a JSON with:
@@ -45,34 +58,76 @@ Return only a JSON object like:
   ]
 }
 `
-    try {
+  try {
 
-        const chatResponse = await groq.chat.completions.create({
-            messages: [
-                {
-                    role: "system",
-                    content: "You are a helpful assistant that analyzes OCR logs and provides useful summaries.",
-                },
-                {
-                    role: "user",
-                    content: prompt,
-                },
-            ],
-            model: "deepseek-r1-distill-llama-70b",
-        });
-    
-        const resultText = chatResponse.choices[0]?.message?.content || "";
+    const chatResponse = await groq.chat.completions.create({
+      messages: [
+        {
+          role: "system",
+          content: "You are a helpful assistant that analyzes OCR logs and provides useful summaries.",
+        },
+        {
+          role: "user",
+          content: prompt,
+        },
+      ],
+      model: "deepseek-r1-distill-llama-70b",
+    });
 
-        const jsonResult = extractJson<HourlyGroqSummary>(resultText)
+    const resultText = chatResponse.choices[0]?.message?.content || "";
 
-        return jsonResult !== null ? jsonResult : { activity: "Error", notes: ["Unable to parse JSON response"] }
-    } catch (error) {
-        console.error("Error:", error);
-        return {
-            activity: "Error",
-            notes: [error instanceof Error ? error.message : "Unknown error"],
-        }
+    const jsonResult = extractJson<HourlyGroqSummary>(resultText)
+
+    return jsonResult !== null ? jsonResult : { activity: "Error", notes: ["Unable to parse JSON response"] }
+  } catch (error) {
+    console.error("Error:", error);
+    return {
+      activity: "Error",
+      notes: [error instanceof Error ? error.message : "Unknown error"],
     }
+  }
 }
 
-export default groqSummarizer
+async function askGroq(question: string, logs: any[]): Promise<string | null> {
+
+  const stringlogs = await JSON.stringify(logs)
+
+  const prompt = `
+You are an intelligent assistant. Your job is to analyze a list of the json data logs of screen activity from a computer session lasting a whole day and answer the question asked by you relating to that text. 
+
+Here's the data:
+${stringlogs}
+
+The question is:
+${question}
+
+Return only a string with the answer.:
+`
+  try {
+
+    const chatResponse = await groq.chat.completions.create({
+      messages: [
+        {
+          role: "system",
+          content: "You are a helpful assistant that analyzes json data logs and answer asked questions.",
+        },
+        {
+          role: "user",
+          content: prompt,
+        },
+      ],
+      model: "deepseek-r1-distill-llama-70b",
+    });
+
+    const resultText = chatResponse.choices[0]?.message?.content || "";
+
+    const cleanedAnswer = cleanAnswer(resultText)
+
+    return cleanedAnswer !== null ? cleanedAnswer : null
+  } catch (error) {
+    console.error("Error:", error);
+    return null
+  }
+}
+
+export { groqSummarizer, askGroq }

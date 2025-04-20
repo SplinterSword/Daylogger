@@ -1,6 +1,6 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
-import groqSummarizer from './groq';
+import { groqSummarizer, askGroq } from './groq';
 
 const app = new Hono();
 
@@ -19,6 +19,20 @@ app.post('/api/groq', async (c) => {
   
   const { activity, notes } = await groqSummarizer(ocrData)
   return c.json({ activity: activity, notes: notes });
+});
+
+app.post('/api/ask-logs', async (c) => {
+  const body = await c.req.json();
+
+  const { question, logs } = body;
+  
+  const answer = await askGroq(question, logs)
+
+  if (!answer) {
+    return c.json({ answer: "No answer received." });
+  }
+
+  return c.json({ answer: answer });
 });
 
 export default {
