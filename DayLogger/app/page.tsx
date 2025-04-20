@@ -134,7 +134,7 @@ export default function Page() {
     setAnswer("")
 
     try {
-      const response = await fetch('http://localhost:8080/api/ask-logs', {
+      const response = await fetch('https://daylogger-backend-973390128867.us-central1.run.app/api/ask-logs', {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
