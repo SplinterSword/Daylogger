@@ -1,6 +1,6 @@
 ![github-submission-banner](https://github.com/user-attachments/assets/a1493b84-e4e2-456e-a791-ce35ee2bcf2f)
 
-# 🚀 Project Title
+# 🚀 DayLogger
 
 > DayLogger is a powerful productivity tool designed to help you reflect on your daily digital life with minimal effort. It provides an hour-by-hour summary of your screen activity, giving you a clear and concise log of how your time was spent throughout the day.
 
@@ -8,9 +8,6 @@
 
 ## 📌 Problem Statement
 
-Select the problem statement number and title from the official list given in Participant Manual.
-
-**Example:**  
 **Problem Statement 6 – Power Productivity with Screenpipe**
 
 ---
